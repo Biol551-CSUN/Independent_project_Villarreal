@@ -1,0 +1,141 @@
+---
+title: "Final project"
+author: "David"
+date: "2023-05-02"
+output: 
+  html_document:
+    toc: TRUE
+    toc_float: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      message= FALSE,
+                       warning =FALSE,
+                       fig.path= "../output/")
+```
+
+# Where did the Data base come from?
+The data used on theis project came from my research on "Exploring Mitochondrial DNA Variation among Ancient Indigenous American Populations". The data was obtained by UC Santa Cruz researcher collaborators, they had ground down tissue to sequence DNA. Which allowed me to do bioinformatic methods. these methods were done in the terminal using SAMtools; which included creating an index, subset, trimming, and consensus on the DNA samples to get final mtDNA samples. Then use Haplogrep(an online tool to identify haplogroups for individual samples) to get haplogroup data.
+
+
+
+
+# Library
+```{r library}
+library(tidyverse)
+library(here)
+library(ggthemes)
+library(dplyr)
+library(tidytext)
+library(ggplot2)
+library(cowplot)
+```
+
+# data import
+```{r}
+mtDNA <- read_csv(here("data", "filtered_haploid.csv"))%>%
+  mutate(new = str_sub(`Haplogroup(trim)`,start=1, end= 2))%>% #filtering row names for haplogroup for trim
+  mutate(region= str_sub(SampleID, start = 5, end= 6)) # filter sample ID name to get region
+```
+
+# First plot
+
+
+```{r}
+#filtered data
+new_mtDNA <- read_csv(here("data", "filtered_haploid.csv"))%>%
+  mutate(new = str_sub(`Haplogroup(trim)`,start=1, end= 2))%>% #filtering row names for haplogroup for trim
+  mutate(region= str_sub(SampleID, start = 5, end= 6))%>% # filter sample ID name to get region
+  group_by(new)
+
+#script for second plot 
+new_mtDNA%>%
+  ggplot(aes(y= new))+
+  geom_bar(fill= "navy blue")+
+  geom_text(stat = "count", aes(label = ..count..),color = "white", position = position_stack(vjust = 0.5))+## this line isnt working
+  theme_classic()+
+  labs(x= "Amount of haplogroups",
+       y= "Haplogroups",
+       title= "Amount of haplogroups groups counted from sample")
+```
+
+# The locations where samples were taken from:
+
+- CL: Colombia  
+- NC: Northern Coast  
+- SC: Southern Coast  
+- NH: Northern Highlands  
+- SH: Southern Highlands  
+- TR: Amazonian ancestry that were buried in SH  
+
+
+# second plot
+
+
+```{r pressure, echo=FALSE}
+#data for plot 1
+maybe_mtDNA <- mtDNA%>% ##test for stacking plot
+  group_by(region)%>%
+  count(new)
+  
+# plot script
+maybe_mtDNA %>%
+  ggplot(aes( y=n, x=region, fill=new)) +
+  geom_bar(position="fill", stat="identity")+
+  theme_calc(base_size = 10 ,base_family = "sans")+
+  labs(x= "Sample's region",
+       y= "Percentage of haplogroups",
+       title = "mtDNA haplogroup distribution across regions (percentage)") +
+  scale_fill_discrete(name = "Haplogroup") 
+```
+
+# Third Plot
+```{r}
+### testing third plot, I HATE THIS!!!!!!!!!!!!!!
+testing_mtDNAnew <- read_csv(here("data", "filtered_haploid.csv"))%>%
+  mutate(new = str_sub(`Haplogroup(trim)`,start=1, end= 2))%>% #filtering row names for haplogroup for trim
+  mutate(region= str_sub(SampleID, start = 5, end= 6))%>% # filter sample ID name to get region
+  group_by(new)
+
+test_mtDNA <- data.frame(region= c("A2", "B2", "C", "D1"),
+  amount= c(14,23,23,10)
+  )
+
+test_mtDNA$fraction = test_mtDNA$amount / sum(test_mtDNA$amount)# Compute percentages
+
+test_mtDNA$ymax = cumsum(test_mtDNA$fraction) # Compute the cumulative percentages (top of each rectangle)
+
+test_mtDNA$ymin = c(0, head(test_mtDNA$ymax, n=-1)) # Compute the bottom of each rectangle
+
+# Make the plot
+donut <- 
+ggplot(test_mtDNA, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2, fill=region)) + #the fill=category makes my code stop
+  geom_rect() +
+  coord_polar(theta="y") + # Try to remove that to understand how the chart is built initially
+  xlim(c(-3, 4))+ # Try to remove that to see how to make a pie chart
+  theme(axis.text.x= element_blank(),
+        axis.text.y= element_blank(),
+        axis.line.x= element_blank(), 
+        axis.line.y= element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  scale_fill_discrete(name = "Haplogroup") 
+
+ggdraw(donut) + #uses plot to layer on top
+draw_label("23", x = 0.58, y = 0.3, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+
+  draw_label("14", x = 0.52, y = 0.77, hjust = 0, vjust = 0,
+             fontfamily = "", fontface = "plain", color = "black", size = 14,
+             colour = "black")+
+  draw_label("23", x = 0.22, y = 0.4, hjust = 0, vjust = 0,
+             fontfamily = "", fontface = "plain", color = "black", size = 14,
+             colour = "black")+
+  draw_label("10", x = 0.32, y = 0.785, hjust = 0, vjust = 0,
+             fontfamily = "", fontface = "plain", color = "black", size = 14,
+             colour = "black")
+
+```
