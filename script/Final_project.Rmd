@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 
 # Where did the Data base come from?
-The data used on theis project came from my research on "Exploring Mitochondrial DNA Variation among Ancient Indigenous American Populations". The data was obtained by UC Santa Cruz researcher collaborators, they had ground down tissue to sequence DNA. Which allowed me to do bioinformatic methods. these methods were done in the terminal using SAMtools; which included creating an index, subset, trimming, and consensus on the DNA samples to get final mtDNA samples. Then use Haplogrep(an online tool to identify haplogroups for individual samples) to get haplogroup data.
+  The data used on theis project came from my research on "Exploring Mitochondrial DNA Variation among Ancient Indigenous American Populations". The data was obtained by UC Santa Cruz researcher collaborators, they had ground down tissue to sequence DNA. Which allowed me to do bioinformatic methods. these methods were done in the terminal using SAMtools; which included creating an index, subset, trimming, and consensus on the DNA samples to get final mtDNA samples. Then use Haplogrep(an online tool to identify haplogroups for individual samples) to get haplogroup data.
 
 
 
@@ -32,15 +32,22 @@ library(ggplot2)
 library(cowplot)
 ```
 
-# data import
+# Data import
 ```{r}
 mtDNA <- read_csv(here("data", "filtered_haploid.csv"))%>%
   mutate(new = str_sub(`Haplogroup(trim)`,start=1, end= 2))%>% #filtering row names for haplogroup for trim
   mutate(region= str_sub(SampleID, start = 5, end= 6)) # filter sample ID name to get region
 ```
 
-# First plot
+# Data dictionary
+```{r}
+data_dictionary <- read_csv(here("data", "data_dictionary.csv"))
 
+glimpse(data_dictionary)
+```
+
+# First plot
+  This graph shows the distribution of which haplogroups were found within the mtDNA samples
 
 ```{r}
 #filtered data
@@ -61,6 +68,7 @@ new_mtDNA%>%
 ```
 
 # The locations where samples were taken from:
+  Samples were taken from different regions within Columbia and Peru.
 
 - CL: Colombia  
 - NC: Northern Coast  
@@ -71,7 +79,7 @@ new_mtDNA%>%
 
 
 # second plot
-
+  This stack plot shows the distribution of which haplogroup was found within each location. Within the stack plot, the amount of haplogroups counted for each region is labeled on the bar. 
 
 ```{r pressure, echo=FALSE}
 #data for plot 1
@@ -80,17 +88,82 @@ maybe_mtDNA <- mtDNA%>% ##test for stacking plot
   count(new)
   
 # plot script
+distribution <- 
 maybe_mtDNA %>%
   ggplot(aes( y=n, x=region, fill=new)) +
   geom_bar(position="fill", stat="identity")+
   theme_calc(base_size = 10 ,base_family = "sans")+
-  labs(x= "Sample's region",
+  labs(x= "Region where sample was found",
        y= "Percentage of haplogroups",
        title = "mtDNA haplogroup distribution across regions (percentage)") +
   scale_fill_discrete(name = "Haplogroup") 
+
+ggdraw(distribution)+
+  draw_label("2", x = 0.13, y = 0.7, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in CL for A2 haplogroups
+    draw_label("2", x = 0.13, y = 0.3, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in CL for B2 haplogroups
+    draw_label("1", x = 0.235, y = 0.862, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NC for A2 haplogroups
+  draw_label("3", x = 0.235, y = 0.75, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NC for B2 haplogroups
+  draw_label("6", x = 0.235, y = 0.5, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NC for C haplogroups
+  draw_label("4", x = 0.235, y = 0.23, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NC for D1 haplogroups
+  draw_label("4", x = 0.345, y = 0.8, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NH for A2 haplogroups
+   draw_label("3", x = 0.345, y = 0.66, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NH for B2 haplogroups
+   draw_label("9", x = 0.345, y = 0.4, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NH for C haplogroups
+   draw_label("3", x = 0.345, y = 0.175, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in NH for D1 haplogroups
+   draw_label("3", x = 0.455, y = 0.745, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SC for A2 haplogroups
+  draw_label("2", x = 0.455, y = 0.5, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SC for B2 haplogroups
+  draw_label("3", x = 0.455, y = 0.24, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SC for C haplogroups
+  draw_label("4", x = 0.56, y = 0.82, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SH for A2 haplogroups
+  draw_label("11", x = 0.55, y = 0.55, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SH for B2 haplogroups
+  draw_label("3", x = 0.56, y = 0.274, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SH for C haplogroups
+  draw_label("3", x = 0.56, y = 0.17, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in SH for D1 haplogroups
+  draw_label("1", x = 0.67, y = 0.49, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in TI for A2 haplogroups
+  draw_label("1", x = 0.77, y = 0.77, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black")+ #label for number of samples in TR for B2 haplogroups
+  draw_label("2", x = 0.77, y = 0.39, hjust = 0, vjust = 0,
+           fontfamily = "", fontface = "plain", color = "black", size = 14,
+           colour = "black") #label for number of samples in TR for C haplogroups
+
 ```
 
 # Third Plot
+The donut graph gives the viewers a different perception on amount of haplogroups found from samples used.
 ```{r}
 ### testing third plot, I HATE THIS!!!!!!!!!!!!!!
 testing_mtDNAnew <- read_csv(here("data", "filtered_haploid.csv"))%>%
@@ -109,6 +182,7 @@ test_mtDNA$ymax = cumsum(test_mtDNA$fraction) # Compute the cumulative percentag
 test_mtDNA$ymin = c(0, head(test_mtDNA$ymax, n=-1)) # Compute the bottom of each rectangle
 
 # Make the plot
+
 donut <- 
 ggplot(test_mtDNA, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2, fill=region)) + #the fill=category makes my code stop
   geom_rect() +
@@ -125,16 +199,16 @@ ggplot(test_mtDNA, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=2, fill=region)) + #th
   scale_fill_discrete(name = "Haplogroup") 
 
 ggdraw(donut) + #uses plot to layer on top
-draw_label("23", x = 0.58, y = 0.3, hjust = 0, vjust = 0,
+draw_label("23", x = 0.59, y = 0.3, hjust = 0, vjust = 0,
            fontfamily = "", fontface = "plain", color = "black", size = 14,
            colour = "black")+
   draw_label("14", x = 0.52, y = 0.77, hjust = 0, vjust = 0,
              fontfamily = "", fontface = "plain", color = "black", size = 14,
              colour = "black")+
-  draw_label("23", x = 0.22, y = 0.4, hjust = 0, vjust = 0,
+  draw_label("23", x = 0.19, y = 0.4, hjust = 0, vjust = 0,
              fontfamily = "", fontface = "plain", color = "black", size = 14,
              colour = "black")+
-  draw_label("10", x = 0.32, y = 0.785, hjust = 0, vjust = 0,
+  draw_label("10", x = 0.31, y = 0.785, hjust = 0, vjust = 0,
              fontfamily = "", fontface = "plain", color = "black", size = 14,
              colour = "black")
 
