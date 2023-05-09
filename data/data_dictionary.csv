@@ -1,6 +1,6 @@
 Variable,Class,Description
-sample_ID,double,the name of sample
+sample_ID,numerical,the name of sample
 Haplogroup(trim),character,specific haplogroup of sample after trimming 2 base pairs  
-Haplogroup(NOTtrim),character,specific heplogroup of samples befor trimming 2 base pairs
+Haplogroup(NOTtrim),character,specific heplogroup of samples before trimming 2 base pairs
 new,character,filtered haplogroup after trimming to get broad haplogroup name
 region,character,location where sample was obtained
