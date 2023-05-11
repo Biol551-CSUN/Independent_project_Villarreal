@@ -18,7 +18,7 @@ Data is focused on Haplogroups found in the South American samples to indicate w
 
 
 ## Data Dictionary
-
+ 
 
 | Column Name  | Data Type |                                         Description |
 |:-------------------------:|:----------------:|--------------------------:|
