@@ -22,7 +22,7 @@ Data is focused on Haplogroups found in the South American samples to indicate w
 
 | Column Name  | Data Type |                                         Description |
 |:-------------------------:|:----------------:|--------------------------:|
-|  Variable   |  Numeric  |   the name of sample |
+|  Sample_ID   |  Numeric  |   the name of sample |
 |    Haplogroup(trim)    | Character | specific haplogroup of sample after trimming two base pairs |
 |     Haplogroup(NOTtrim)      |  Character  |     specific haplogroup of sample before trimming two base pairs |
 |     new     | Character |      filtered haplogroup after trimming to get broad haplogroup name|
